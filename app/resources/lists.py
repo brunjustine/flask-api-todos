@@ -21,8 +21,56 @@ class ListManagementResource(Resource):
         """
         return LISTS,200
 
+class ListManagementResourceByID(Resource):
+    def get(self, list_id: int) -> Dict[str, Any]:
+        """
+        Get the content of a list in the lists service
+        ---
+        tags:
+            - Flask API
+        parameters:
+            - in: path
+              name: list_id
+              description: The id of the list to get
+              required: true
+              type: string
+        responses:
+            200:
+                description: JSON representing the list
+            404:
+                description: The list does not exist
+        """
+        abort_if_list_doesnt_exist(list_id)
+        return LISTS[list_id], 200
 
-class ListManagementResourceByTodoID(Resource):
+
+class ListTodosManagementResourceByID(Resource):
+     def get(self, list_id: int) -> Dict[str, Any]:
+        """
+        Get the todos of a list in the lists service
+        ---
+        tags:
+            - Flask API
+        parameters:
+            - in: path
+              name: list_id
+              description: The id of the list to get the todos
+              required: true
+              type: string
+        responses:
+            200:
+                description: JSON representing the list
+            404:
+                description: The list does not exist
+        """
+        abort_if_list_doesnt_exist(list_id)
+        try : 
+            todos =  LISTS[list_id]['todos']
+            return todos, 200
+        except:
+            abort(400)
+
+class ListTodoManagementResourceByID(Resource):
      def get(self, list_id: int, todo_id: int) -> Dict[str, Any]:
         """
         Get the content of a todo of a list in the lists service
@@ -49,30 +97,8 @@ class ListManagementResourceByTodoID(Resource):
         abort_if_todo_or_list_doesnt_exist(list_id,todo_id)
         try : 
             todos =  LISTS[list_id]
-            todo = todos['list'][todo_id]
-            return todo, 200
+            todo_by_ID = todos['todos'][todo_id]
+            return todo_by_ID, 200
         except:
             abort(400)
-
-class ListManagementResourceByID(Resource):
-    def get(self, list_id: int) -> Dict[str, Any]:
-        """
-        Get the content of a list in the lists service
-        ---
-        tags:
-            - Flask API
-        parameters:
-            - in: path
-              name: list_id
-              description: The id of the list to get
-              required: true
-              type: string
-        responses:
-            200:
-                description: JSON representing the list
-            404:
-                description: The list does not exist
-        """
-        abort_if_list_doesnt_exist(list_id)
-        return LISTS[list_id], 200
 

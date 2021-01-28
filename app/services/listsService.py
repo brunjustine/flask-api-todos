@@ -64,10 +64,10 @@ TODOS_2 = [
 LISTS = [
     {
         'id':0,
-        'list':TODOS_1
+        'todos':TODOS_1
     },
     {
         'id':1,
-        'list':TODOS_2
+        'todos':TODOS_2
     }
 ]

@@ -43,7 +43,7 @@ def abort_if_list_doesnt_exist(list_id: int):
         abort(404,  message="Cannot find the LIST with id {}".format(list_id))
 
 def get_list_todos_ids(list_id:int)-> List[int]:
-    return list(map(lambda list: list['id'], LISTS[list_id]['list']))
+    return list(map(lambda list: list['id'], LISTS[list_id]['todos']))
 
 
 def abort_if_todo_or_list_doesnt_exist(list_id:int, todo_id: int):
