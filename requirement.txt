@@ -1,0 +1,12 @@
+pip install pyjwt
+pip install flask_swagger_ui
+pip install flask_swagger
+pip install flask_restful
+pip install Flask
+
+# utiliser postman pour tester l'api
+
+# source flask-env/bin/activate pour lancer l'environnement virtuel
+# ou . flask-env/bin/activate
+
+# lancer avec : python3 api.py
