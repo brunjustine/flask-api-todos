@@ -1,0 +1,23 @@
+pyjwt
+flask_swagger_ui
+flask_swagger
+flask_restful
+Flask
+
+# utiliser postman pour tester l'api
+
+# source flask-env/bin/activate pour lancer l'environnement virtuel
+# ou . flask-env/bin/activate
+
+# lancer avec : python3 api.py
+
+
+#docker build -t myimage .
+
+#RUN pip install pyjwt
+#RUN pip install flask_swagger_ui
+#RUN pip install flask_swagger
+#RUN pip install flask_restful
+#RUN pip install Flask
+
+#docker-compose up -d

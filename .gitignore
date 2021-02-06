@@ -1,0 +1,5 @@
+__pycache__
+flask-env
+/app/resources/__pycache__
+/app/services/__pycache__
+/app/utils/__pycache__
