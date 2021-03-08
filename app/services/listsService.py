@@ -1,3 +1,5 @@
+from app.services.todosService import TODOS
+
 TODOS_1 = [
     {
         'id':0,
@@ -64,7 +66,7 @@ TODOS_2 = [
 LISTS = [
     {
         'id':0,
-        'todos':TODOS_1
+        'todos':[TODOS[0],TODOS[1],TODOS[3]]
     },
     {
         'id':1,

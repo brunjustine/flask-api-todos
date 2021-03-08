@@ -4,6 +4,7 @@ from flask_restful import Resource, reqparse, abort
 from typing import Dict, List, Any
 
 from app.services.todosService import TODOS
+from app.utils.utils import *
 
 class TodoManagementResource(Resource):
 
@@ -83,7 +84,7 @@ class TodoManagementResourceByID(Resource):
                 description: The todo does not exist
         """
         abort_if_todo_doesnt_exist(todo_id)
-        return TODOS[todo_id], 200
+        return get_todo(todo_id), 200
 
     def delete(self, todo_id: int) -> Dict[str, Any]:
         """
@@ -104,8 +105,8 @@ class TodoManagementResourceByID(Resource):
                 description: The todo does not exist
         """
         abort_if_todo_doesnt_exist(todo_id)
-        todo = TODOS[:][todo_id]
-        del TODOS[todo_id]
+        todo = get_todo(todo_id)
+        TODOS.remove(todo)
         return todo, 200
 
     def patch(self, todo_id: int) -> Dict[str, Any]:
@@ -144,14 +145,15 @@ class TodoManagementResourceByID(Resource):
         body_parser.add_argument('created_on', type=str, required=False, help="Missing the creation date of the task")
         args = body_parser.parse_args(strict=False)
         try:
-            task = TODOS[todo_id]
+            task = get_todo(todo_id)
             name = args['name']
             created_on = args['created_on']
             if name != None:
                 task['task']['name'] = name
             if created_on != None:
                 task['task']['created_on'] = created_on
-            TODOS[todo_id] = task
+            todo_to_update = get_todo(todo_id) 
+            todo_to_update = task
             return task, 202 # Accepted, updated or not if putting the same data
         except:
             abort(400)

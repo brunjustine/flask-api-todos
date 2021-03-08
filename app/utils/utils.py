@@ -33,6 +33,9 @@ def getFirstMissingID() -> int:
             break
     return i
 
+def get_todo(todo_id:int) ->  Dict[str, Any]:
+    return list(filter(lambda todo : todo['id']==todo_id, TODOS))[0]
+
 
 def get_list_ids() -> List[int]:
     return list(map(lambda list: list['id'], LISTS))

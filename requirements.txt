@@ -11,13 +11,4 @@ Flask
 
 # lancer avec : python3 api.py
 
-
-#docker build -t myimage .
-
-#RUN pip install pyjwt
-#RUN pip install flask_swagger_ui
-#RUN pip install flask_swagger
-#RUN pip install flask_restful
-#RUN pip install Flask
-
 #docker-compose up -d
