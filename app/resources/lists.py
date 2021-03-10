@@ -8,8 +8,9 @@ from app.services.todosService import TODOS
 
 from app.utils.utils import *
 
+
 class ListManagementResource(Resource):
-    def get(self) -> Dict[str,Any]:
+    def get(self) -> Dict[str, Any]:
         """
         Return all the LISTS contained in the lists service
         ---
@@ -17,10 +18,10 @@ class ListManagementResource(Resource):
             - Flask API
         responses:
             200:
-                description: JSON representing all the elements of the lists service    
+                description: JSON representing all the elements of the lists service
         """
-        return return_message(LISTS,200)
-        
+        return return_message(LISTS, 200)
+
     def put(self) -> Dict[str, Any]:
         """
         Create the content of a list in the lists service
@@ -47,10 +48,14 @@ class ListManagementResource(Resource):
             400:
                 description: The parameters are missing or are not correct
         """
-        body_parser = reqparse.RequestParser(bundle_errors=True) # Throw all the elements that has been filled uncorrectly
-        body_parser.add_argument('name', type=str, required=True, help="Missing the name of the list")
-        body_parser.add_argument('created_on', type=str, required=True, help="Missing the creation date of the list")
-        args = body_parser.parse_args(strict=True) # Accepted only if these two parameters are strictly declared in body else raise exception
+        body_parser = reqparse.RequestParser(
+            bundle_errors=True)  # Throw all the elements that has been filled uncorrectly
+        body_parser.add_argument(
+            'name', type=str, required=True, help="Missing the name of the list")
+        body_parser.add_argument(
+            'created_on', type=str, required=True, help="Missing the creation date of the list")
+        # Accepted only if these two parameters are strictly declared in body else raise exception
+        args = body_parser.parse_args(strict=True)
         try:
             id = getFirstMissingID(LISTS)
             print(id)
@@ -62,10 +67,9 @@ class ListManagementResource(Resource):
             list['created_on'] = created_on
             list['todos'] = []
             LISTS.insert(id, list)
-            return return_message(list,201)
+            return return_message(list, 201)
         except:
-            abort(400,return_message({},400))
-            
+            abort(400, return_message({}, 400))
 
 
 class ListManagementResourceByID(Resource):
@@ -88,7 +92,31 @@ class ListManagementResourceByID(Resource):
                 description: The list does not exist
         """
         abort_if_list_doesnt_exist(list_id)
-        return return_message(get_element_in_dic(list_id,LISTS), 200)
+        return return_message(get_element_in_dic(list_id, LISTS), 200)
+
+    def delete(self, list_id: int) -> Dict[str, Any]:
+        """
+        Delete the content of a list in the list service
+        ---
+        tags:
+            - Flask API
+        parameters:
+            - in: path
+              name: list_id
+              description: The id of the list to delete
+              required: true
+              type: string
+        responses:
+            200:
+                description: JSON representing the lists
+            404:
+                description: The list does not exist
+        """
+        abort_if_list_doesnt_exist(list_id)
+        list = get_element_in_dic(list_id, LISTS)
+        LISTS.remove(list)
+        return return_message(list, 200)
+
 
 class ListTodosManagementResourceByID(Resource):
     def get(self, list_id: int) -> Dict[str, Any]:
@@ -110,14 +138,14 @@ class ListTodosManagementResourceByID(Resource):
                 description: The list does not exist
         """
         abort_if_list_doesnt_exist(list_id)
-        try : 
-            list = get_element_in_dic(list_id,LISTS)
-            todos =  list['todos']
+        try:
+            list = get_element_in_dic(list_id, LISTS)
+            todos = list['todos']
             return return_message(todos, 200)
         except:
-            abort(400,return_message({},400))
+            abort(400, return_message({}, 400))
 
-    def put(self, list_id:int) -> Dict[str, Any]:
+    def put(self, list_id: int) -> Dict[str, Any]:
         """
         Create the content of a todo in a list in the lists service
         ---
@@ -153,19 +181,22 @@ class ListTodosManagementResourceByID(Resource):
         # Accepted only if these two parameters are strictly declared in body else raise exception
         args = body_parser.parse_args(strict=True)
         try:
-            id = getFirstMissingID(TODOS)
+            list = get_element_in_dic(list_id, LISTS)
+            id = getFirstMissingID(list['todos'])
             print(id)
+
             name = args['name']
             created_on = args['created_on']
             todo = {}
             todo['id'] = id
             todo['name'] = name
             todo['created_on'] = created_on
-            list = get_element_in_dic(list_id, LISTS)
-            list['todos'].insert(id,todo)
+            
+            list['todos'].insert(id, todo)
             return return_message(list, 201)
         except:
-            abort(400, test=return_message({},400))
+            abort(400, test=return_message({}, 400))
+
 
 class ListTodoManagementResourceByID(Resource):
      def get(self, list_id: int, todo_id: int) -> Dict[str, Any]:
@@ -191,12 +222,36 @@ class ListTodoManagementResourceByID(Resource):
             404:
                 description: The todo or the list does not exist
         """
-        abort_if_todo_or_list_doesnt_exist(list_id,todo_id)
-        try : 
-            list = get_element_in_dic(list_id,LISTS)
+        abort_if_todo_or_list_doesnt_exist(list_id, todo_id)
+        try:
+            list = get_element_in_dic(list_id, LISTS)
             todos = list['todos']
-            todo_by_ID = get_element_in_dic(todo_id,todos)
+            todo_by_ID = get_element_in_dic(todo_id, todos)
             return return_message(todo_by_ID, 200)
         except:
-            abort(400,return_message({},400))
+            abort(400, return_message({}, 400))
+    
+     def delete(self, list_id: int, todo_id: int) -> Dict[str, Any]:
+        """
+        Delete the content of a todo of a list in the list service
+        ---
+        tags:
+            - Flask API
+        parameters:
+            - in: path
+              name: todo_id
+              description: The id of the list to delete
+              required: true
+              type: string
+        responses:
+            200:
+                description: JSON representing the lists
+            404:
+                description: The list does not exist
+        """
+        abort_if_todo_or_list_doesnt_exist(list_id, todo_id)
+        list = get_element_in_dic(list_id,LISTS)
+        todo = get_element_in_dic(todo_id, list['todos'])
+        list['todos'].remove(todo)
+        return return_message(todo, 200)
 
