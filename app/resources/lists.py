@@ -117,6 +117,58 @@ class ListManagementResourceByID(Resource):
         LISTS.remove(list)
         return return_message(list, 200)
 
+    def patch(self, list_id: int) -> Dict[str, Any]:
+        """
+        Update the content of a list in the list service
+        ---
+        tags:
+            - Flask API
+        parameters:
+            - in: path
+              name: list_id
+              description: The id of the list to update
+              required: true
+              type: string
+            - in: body
+              name: attributes
+              description: The updated name and/or the creation date of the list
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  created_on:
+                    type: string
+        responses:
+            202:
+                description: JSON representing updated list if new data has been given by the body
+            400:
+                description: The parameters are missing or are not correct
+            404:
+                description: The list does not exist
+        """
+        abort_if_list_doesnt_exist(list_id)
+        body_parser = reqparse.RequestParser()
+        body_parser.add_argument(
+            'name', type=str, required=False, help="Missing the name of the list")
+        body_parser.add_argument(
+            'created_on', type=str, required=False, help="Missing the creation date of the list")
+        args = body_parser.parse_args(strict=False)
+        try:
+            list = get_element_in_dic(list_id, LISTS)
+            name = args['name']
+            created_on = args['created_on']
+            if name != None:
+                list['name'] = name
+            if created_on != None:
+                list['created_on'] = created_on
+            list_to_update = get_element_in_dic(list_id, LISTS)
+            list_to_update = list
+            # Accepted, updated or not if putting the same data
+            return return_message(list_to_update, 202)
+        except:
+            abort(400, return_message({}, 400))
+
 
 class ListTodosManagementResourceByID(Resource):
     def get(self, list_id: int) -> Dict[str, Any]:
@@ -191,7 +243,7 @@ class ListTodosManagementResourceByID(Resource):
             todo['id'] = id
             todo['name'] = name
             todo['created_on'] = created_on
-            
+
             list['todos'].insert(id, todo)
             return return_message(list, 201)
         except:
@@ -199,7 +251,7 @@ class ListTodosManagementResourceByID(Resource):
 
 
 class ListTodoManagementResourceByID(Resource):
-     def get(self, list_id: int, todo_id: int) -> Dict[str, Any]:
+    def get(self, list_id: int, todo_id: int) -> Dict[str, Any]:
         """
         Get the content of a todo of a list in the lists service
         ---
@@ -230,8 +282,8 @@ class ListTodoManagementResourceByID(Resource):
             return return_message(todo_by_ID, 200)
         except:
             abort(400, return_message({}, 400))
-    
-     def delete(self, list_id: int, todo_id: int) -> Dict[str, Any]:
+
+    def delete(self, list_id: int, todo_id: int) -> Dict[str, Any]:
         """
         Delete the content of a todo of a list in the list service
         ---
@@ -250,8 +302,64 @@ class ListTodoManagementResourceByID(Resource):
                 description: The list does not exist
         """
         abort_if_todo_or_list_doesnt_exist(list_id, todo_id)
-        list = get_element_in_dic(list_id,LISTS)
+        list = get_element_in_dic(list_id, LISTS)
         todo = get_element_in_dic(todo_id, list['todos'])
         list['todos'].remove(todo)
         return return_message(todo, 200)
 
+    def patch(self, list_id: int, todo_id: int) -> Dict[str, Any]:
+        """
+        Update the content of a todo of a list in the list service
+        ---
+        tags:
+            - Flask APIn
+        parameters:
+            - in: path
+                name: list_id
+                description: The id of the list of the todo to update
+                required: true
+                type: string
+                - in: path
+                name: todo_id
+                description: The id of the todo to update
+                required: true
+                type: string
+            - in: body
+                name: attributes
+                description: The updated name and/or the creation date of the todo of a list
+                schema:
+                type: object
+                properties:
+                    name:
+                    type: string
+                    created_on:
+                    type: string
+        responses:
+            202:
+                description: JSON representing updated list and todo if new data has been given by the body
+            400:
+                description: The parameters are missing or are not correct
+            404:
+                description: The list or the todo does not exist 
+        """
+        abort_if_todo_or_list_doesnt_exist(list_id, todo_id)
+        body_parser = reqparse.RequestParser()
+        body_parser.add_argument(
+            'name', type=str, required=False, help="Missing the name of the list")
+        body_parser.add_argument(
+            'created_on', type=str, required=False, help="Missing the creation date of the list")
+        args = body_parser.parse_args(strict=False)
+        try:
+            list = get_element_in_dic(list_id, LISTS)
+            todo = get_element_in_dic(todo_id, list['todos'])
+            name = args['name']
+            created_on = args['created_on']
+            if name != None:
+                todo['task']['name'] = name
+            if created_on != None:
+                todo['task']['created_on'] = created_on
+            todo_to_update = get_element_in_dic(todo_id, list['todos'])
+            todo_to_update = todo
+            return return_message(todo_to_update, 202)  # Accepted, updated or not if putting the same data
+        except:
+            abort(400, return_message({},400))

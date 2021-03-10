@@ -64,6 +64,7 @@ def abort_if_todo_or_list_doesnt_exist(list_id:int, todo_id: int):
 def return_message(data: Dict[str, Any], status:int) -> Dict[str, Any]:
     message = {
         200 : "OK",
+        202 : "Accepted",
         201 : "Created",
         400 : "Bad Request",
         404 : "Not found"

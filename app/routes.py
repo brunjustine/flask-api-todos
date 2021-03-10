@@ -2,6 +2,7 @@ from app import api
 
 from app.resources.helloworld import HelloWorldResource, HelloWorldResourceNameToken, HelloWorldResourceNameURL, HelloWorldResourceNames
 from app.resources.login import LoginResource
+from app.resources.users import UserManagementResource
 from app.resources.todos import TodoManagementResource, TodoManagementResourceByID
 from app.resources.lists import ListManagementResource, ListTodoManagementResourceByID, ListManagementResourceByID, ListTodosManagementResourceByID
 
@@ -13,6 +14,9 @@ api.add_resource(HelloWorldResourceNames, '/api/hello/<int:count>')
 
 # Login
 api.add_resource(LoginResource, '/api/login')
+
+#Authentification
+api.add_resource(UserManagementResource, '/api/account')
 
 # Todos app
 api.add_resource(TodoManagementResource, '/api/todos')
