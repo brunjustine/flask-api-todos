@@ -19,7 +19,54 @@ class ListManagementResource(Resource):
             200:
                 description: JSON representing all the elements of the lists service    
         """
-        return LISTS,200
+        return return_message(LISTS,200)
+        
+    def put(self) -> Dict[str, Any]:
+        """
+        Create the content of a list in the lists service
+        ---
+        tags:
+            - Flask API
+        parameters:
+            - in: body
+              name: attributes
+              description: The name and creation date of the task to create
+              schema:
+                type: object
+                required:
+                    - name
+                    - created_on
+                properties:
+                  name:
+                    type: string
+                  created_on:
+                    type: string
+        responses:
+            201:
+                description: JSON representing created list
+            400:
+                description: The parameters are missing or are not correct
+        """
+        body_parser = reqparse.RequestParser(bundle_errors=True) # Throw all the elements that has been filled uncorrectly
+        body_parser.add_argument('name', type=str, required=True, help="Missing the name of the list")
+        body_parser.add_argument('created_on', type=str, required=True, help="Missing the creation date of the list")
+        args = body_parser.parse_args(strict=True) # Accepted only if these two parameters are strictly declared in body else raise exception
+        try:
+            id = getFirstMissingID(LISTS)
+            print(id)
+            name = args['name']
+            created_on = args['created_on']
+            list = {}
+            list['id'] = id
+            list['name'] = name
+            list['created_on'] = created_on
+            list['todos'] = []
+            LISTS.insert(id, list)
+            return return_message(list,201)
+        except:
+            abort(400,return_message({},400))
+            
+
 
 class ListManagementResourceByID(Resource):
     def get(self, list_id: int) -> Dict[str, Any]:
@@ -41,11 +88,10 @@ class ListManagementResourceByID(Resource):
                 description: The list does not exist
         """
         abort_if_list_doesnt_exist(list_id)
-        return LISTS[list_id], 200
-
+        return return_message(get_element_in_dic(list_id,LISTS), 200)
 
 class ListTodosManagementResourceByID(Resource):
-     def get(self, list_id: int) -> Dict[str, Any]:
+    def get(self, list_id: int) -> Dict[str, Any]:
         """
         Get the todos of a list in the lists service
         ---
@@ -65,10 +111,61 @@ class ListTodosManagementResourceByID(Resource):
         """
         abort_if_list_doesnt_exist(list_id)
         try : 
-            todos =  LISTS[list_id]['todos']
-            return todos, 200
+            list = get_element_in_dic(list_id,LISTS)
+            todos =  list['todos']
+            return return_message(todos, 200)
         except:
-            abort(400)
+            abort(400,return_message({},400))
+
+    def put(self, list_id:int) -> Dict[str, Any]:
+        """
+        Create the content of a todo in a list in the lists service
+        ---
+        tags:
+            - Flask API
+        parameters:
+            - in: body
+            name: attributes
+            description: The name and creation date of the task to create
+            schema:
+                type: object
+                required:
+                    - name
+                    - created_on
+                properties:
+                name:
+                    type: string
+                created_on:
+                    type: string
+        responses:
+            201:
+                description: JSON representing created todo in the list
+            400:
+                description: The parameters are missing or are not correct
+        """
+        abort_if_list_doesnt_exist(list_id)
+        # Throw all the elements that has been filled uncorrectly
+        body_parser = reqparse.RequestParser(bundle_errors=True)
+        body_parser.add_argument(
+            'name', type=str, required=True, help="Missing the name of the task")
+        body_parser.add_argument(
+            'created_on', type=str, required=True, help="Missing the creation date of the task")
+        # Accepted only if these two parameters are strictly declared in body else raise exception
+        args = body_parser.parse_args(strict=True)
+        try:
+            id = getFirstMissingID(TODOS)
+            print(id)
+            name = args['name']
+            created_on = args['created_on']
+            todo = {}
+            todo['id'] = id
+            todo['name'] = name
+            todo['created_on'] = created_on
+            list = get_element_in_dic(list_id, LISTS)
+            list['todos'].insert(id,todo)
+            return return_message(list, 201)
+        except:
+            abort(400, test=return_message({},400))
 
 class ListTodoManagementResourceByID(Resource):
      def get(self, list_id: int, todo_id: int) -> Dict[str, Any]:
@@ -96,9 +193,10 @@ class ListTodoManagementResourceByID(Resource):
         """
         abort_if_todo_or_list_doesnt_exist(list_id,todo_id)
         try : 
-            todos =  LISTS[list_id]
-            todo_by_ID = todos['todos'][todo_id]
-            return todo_by_ID, 200
+            list = get_element_in_dic(list_id,LISTS)
+            todos = list['todos']
+            todo_by_ID = get_element_in_dic(todo_id,todos)
+            return return_message(todo_by_ID, 200)
         except:
-            abort(400)
+            abort(400,return_message({},400))
 

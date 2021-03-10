@@ -30,7 +30,7 @@ TODOS = [
     {
         'id':4,
         'task':{
-            'name':'Repeat',
+            'name':'Rfrom app.services.todosService import TODOSepeat',
             'created_on':'03/03/2020'
         }
     }

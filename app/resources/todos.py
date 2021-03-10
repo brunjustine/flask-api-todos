@@ -18,7 +18,7 @@ class TodoManagementResource(Resource):
             200:
                 description: JSON representing all the elements of the todos service
         """
-        return TODOS, 200
+        return return_message(TODOS, 200)
 
     def put(self) -> Dict[str, Any]:
         """
@@ -51,7 +51,7 @@ class TodoManagementResource(Resource):
         body_parser.add_argument('created_on', type=str, required=True, help="Missing the creation date of the task")
         args = body_parser.parse_args(strict=True) # Accepted only if these two parameters are strictly declared in body else raise exception
         try:
-            id = getFirstMissingID()
+            id = getFirstMissingID(TODOS)
             print(id)
             name = args['name']
             created_on = args['created_on']
@@ -59,9 +59,9 @@ class TodoManagementResource(Resource):
             todo['id'] = id
             todo['task'] = {'name':name, 'created_on':created_on}
             TODOS.insert(id, todo)
-            return todo, 201
+            return return_message(todo, 201)
         except:
-            abort(400)
+            abort(400,return_message({},400))
 
 class TodoManagementResourceByID(Resource):
 
@@ -84,7 +84,7 @@ class TodoManagementResourceByID(Resource):
                 description: The todo does not exist
         """
         abort_if_todo_doesnt_exist(todo_id)
-        return get_todo(todo_id), 200
+        return return_message(get_element_in_dic(todo_id,TODOS), 200)
 
     def delete(self, todo_id: int) -> Dict[str, Any]:
         """
@@ -105,9 +105,9 @@ class TodoManagementResourceByID(Resource):
                 description: The todo does not exist
         """
         abort_if_todo_doesnt_exist(todo_id)
-        todo = get_todo(todo_id)
+        todo = get_element_in_dic(todo_id,TODOS)
         TODOS.remove(todo)
-        return todo, 200
+        return return_message(todo, 200)
 
     def patch(self, todo_id: int) -> Dict[str, Any]:
         """
@@ -145,42 +145,16 @@ class TodoManagementResourceByID(Resource):
         body_parser.add_argument('created_on', type=str, required=False, help="Missing the creation date of the task")
         args = body_parser.parse_args(strict=False)
         try:
-            task = get_todo(todo_id)
+            task = get_element_in_dic(todo_id,TODOS)
             name = args['name']
             created_on = args['created_on']
             if name != None:
                 task['task']['name'] = name
             if created_on != None:
                 task['task']['created_on'] = created_on
-            todo_to_update = get_todo(todo_id) 
+            todo_to_update = get_element_in_dic(todo_id,TODOS)
             todo_to_update = task
-            return task, 202 # Accepted, updated or not if putting the same data
+            return return_message(task, 202) # Accepted, updated or not if putting the same data
         except:
-            abort(400)
+            abort(400,return_message({},400))
 
-def get_todo_ids() -> List[int]:
-    return list(map(lambda todo: todo['id'], TODOS))
-
-def abort_if_todo_doesnt_exist(todo_id: int):
-    todo_ids = get_todo_ids()
-    if todo_id not in todo_ids:
-        abort(404,  message="Cannot find the TODO with id {}".format(todo_id))
-
-def abort_if_todo_already_exist(todo_id: int):
-    todo_ids = get_todo_ids()
-    if todo_id in todo_ids:
-        abort(404,  message="TODO with id {} already exists".format(todo_id))
-
-def abort_if_todo_has_negative_id(todo_id: int):
-    if todo_id < 0:
-        abort(404,  message="TODO cannot have negative id value")
-
-def getFirstMissingID() -> int:
-    todo_ids = get_todo_ids()
-    i = 1
-    while (i < len(todo_ids)):
-        if (TODOS[i-1]['id'] == TODOS[i]['id'] - 1):
-            i+=1
-        else:
-            break
-    return i
