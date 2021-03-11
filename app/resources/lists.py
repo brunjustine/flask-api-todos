@@ -69,7 +69,7 @@ class ListManagementResource(Resource):
             LISTS.insert(id, list)
             return return_message(list, 201)
         except:
-            abort(400, return_message({}, 400))
+            return_message({},400)
 
 
 class ListManagementResourceByID(Resource):
@@ -167,7 +167,7 @@ class ListManagementResourceByID(Resource):
             # Accepted, updated or not if putting the same data
             return return_message(list_to_update, 202)
         except:
-            abort(400, return_message({}, 400))
+            return_message({},400)
 
 
 class ListTodosManagementResourceByID(Resource):
@@ -195,7 +195,7 @@ class ListTodosManagementResourceByID(Resource):
             todos = list['todos']
             return return_message(todos, 200)
         except:
-            abort(400, return_message({}, 400))
+            return_message({},400)
 
     def put(self, list_id: int) -> Dict[str, Any]:
         """
@@ -247,7 +247,7 @@ class ListTodosManagementResourceByID(Resource):
             list['todos'].insert(id, todo)
             return return_message(list, 201)
         except:
-            abort(400, test=return_message({}, 400))
+            return_message({},400)
 
 
 class ListTodoManagementResourceByID(Resource):
@@ -281,7 +281,7 @@ class ListTodoManagementResourceByID(Resource):
             todo_by_ID = get_element_in_dic(todo_id, todos)
             return return_message(todo_by_ID, 200)
         except:
-            abort(400, return_message({}, 400))
+            return_message({},400)
 
     def delete(self, list_id: int, todo_id: int) -> Dict[str, Any]:
         """
@@ -362,4 +362,4 @@ class ListTodoManagementResourceByID(Resource):
             todo_to_update = todo
             return return_message(todo_to_update, 202)  # Accepted, updated or not if putting the same data
         except:
-            abort(400, return_message({},400))
+            return_message({},400)

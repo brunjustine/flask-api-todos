@@ -29,18 +29,18 @@ def get_all_todos() -> Dict[str, Any] :
 def abort_if_todo_doesnt_exist(todo_id: int):
     todo_ids = get_ids(TODOS)
     if todo_id not in todo_ids:
-        abort(404,  message="Cannot find the TODO with id {}".format(todo_id))
+        return_message({},404," Cannot find the TODO with id {}".format(todo_id))
 
 # TODELETE
 def abort_if_todo_already_exist(todo_id: int):
     todo_ids = get_ids(TODOS)
     if todo_id in todo_ids:
-        abort(404,  message="TODO with id {} already exists".format(todo_id))
+        return_message({},404," TODO with id {} already exists".format(todo_id))
 
 # TODELETE
 def abort_if_todo_has_negative_id(todo_id: int):
     if todo_id < 0:
-        abort(404,  message="TODO cannot have negative id value")
+        return_message({},404," TODO cannot have negative id value")
 
 # TODELETE
 def get_todo(todo_id:int) ->  Dict[str, Any]:
@@ -49,7 +49,7 @@ def get_todo(todo_id:int) ->  Dict[str, Any]:
 def abort_if_list_doesnt_exist(list_id: int):
     list_ids = get_ids(LISTS)
     if list_id not in list_ids:
-        abort(404,  message="Cannot find the LIST with id {}".format(list_id))
+        return_message({},404," Cannot find the LIST with id {}".format(list_id))
 
 def get_list_todos_ids(list_id:int)-> List[int]:
     return list(map(lambda list: list['id'], LISTS[list_id]['todos']))
@@ -59,15 +59,18 @@ def abort_if_todo_or_list_doesnt_exist(list_id:int, todo_id: int):
     list = get_element_in_dic(list_id,LISTS)
     list_todos_ids = get_ids(list['todos'])
     if todo_id not in list_todos_ids:
-        abort(404,  message="Cannot find the TODO with id {} in ths LIST with the id {}".format(todo_id,list_id))
+        return_message({},404, " Cannot find the TODO with id {} in ths LIST with the id {}".format(todo_id,list_id))
 
-def return_message(data: Dict[str, Any], status:int) -> Dict[str, Any]:
+def return_message(data: Dict[str, Any], status:int, message="") -> Dict[str, Any]:
+    if status == 404 :
+        abort(status, status=status, message="Not found"+message, data={})
+    if status == 400 :
+        abort(status, status=status, message="Bad Request"+message, data={})
+    
     message = {
         200 : "OK",
         202 : "Accepted",
-        201 : "Created",
-        400 : "Bad Request",
-        404 : "Not found"
+        201 : "Created"
     }
     return {"status": status,
             "message": message[status], 

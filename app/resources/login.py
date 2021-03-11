@@ -30,3 +30,4 @@ def login(login, hash):
         return { "message" : "Logged in successfully" }, 200
     else:
         return { "message" : "Cannot log in, check your credentials and retry"}, 401
+
