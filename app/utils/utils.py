@@ -63,14 +63,16 @@ def abort_if_todo_or_list_doesnt_exist(list_id:int, todo_id: int):
 
 def return_message(data: Dict[str, Any], status:int, message="") -> Dict[str, Any]:
     if status == 404 :
-        abort(status, status=status, message="Not found"+message, data={})
+        abort(status, status=status, message="Not found"+message, data=data)
+    if status == 401 :
+        abort(status, status=status, message="Unauthorized"+message, data=data)
     if status == 400 :
-        abort(status, status=status, message="Bad Request"+message, data={})
-    
+        abort(status, status=status, message="Bad Request"+message, data=data)
     message = {
-        200 : "OK",
+        200 : "OK"+message,
         202 : "Accepted",
         201 : "Created"
+        #401 : "Unauthorized"+message
     }
     return {"status": status,
             "message": message[status], 
