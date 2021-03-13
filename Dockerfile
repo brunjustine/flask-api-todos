@@ -1,6 +1,6 @@
 FROM python:latest
 LABEL "Author"="Justine Brun brunjustin@eisti.eu"
-WORKDIR /app
+WORKDIR /app/api
 
 COPY requirements.txt .
 RUN pip install --upgrade pip
