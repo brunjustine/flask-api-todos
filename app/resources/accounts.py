@@ -63,18 +63,11 @@ class AccountsManagementResource(Resource):
             user = {}
             user['id'] = id
             user['login'] = login
-            user['password'] = hash_password(password)
+            user['password'] = password
             USERS.insert(id, user)
             return return_message(user, 201)
         except:
             return_message({},400)
-        
-def hash_password(user_password):
-    salt = hashlib.sha256(os.urandom(60)).hexdigest().encode('ascii')
-    key = hashlib.pbkdf2_hmac('sha256',user_password.encode('utf-8'), salt, 100000)
-    # Convert to JSON serializable:
-    keyhash = binascii.hexlify(key)
-    return {'salt': salt.decode('ascii'),'key': keyhash.decode('ascii')}
 
 def get_logins():
     return list(map(lambda user: user['login'], USERS))

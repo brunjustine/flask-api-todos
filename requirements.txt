@@ -3,7 +3,7 @@ flask_swagger_ui
 flask_swagger
 flask_restful
 Flask
-
+flask-bcrypt
 # utiliser postman pour tester l'api
 
 # source flask-env/bin/activate pour lancer l'environnement virtuel

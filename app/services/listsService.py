@@ -10,7 +10,8 @@ LISTS = [
                 'id':0,
                 'task':{
                     'name':'Légumes',
-                    'created_on':'29/02/2020'
+                    'created_on':'29/02/2020',
+                    'description':'Aller faire le marché dimanche matin à 10h.'
                 }
             },
             {

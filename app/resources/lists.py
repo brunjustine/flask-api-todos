@@ -20,7 +20,16 @@ class ListManagementResource(Resource):
             200:
                 description: JSON representing all the elements of the lists service
         """
+        body_parser = reqparse.RequestParser(bundle_errors=True)  # Throw all the elements that has been filled uncorrectly
+        body_parser.add_argument('token', type=str, required=True, help="Missing the token")
+        args = body_parser.parse_args(strict=True)
+        try:
+            token = args['token']
+            is_connect(token)
+        except:
+            return_message({},401)
         return return_message(LISTS, 200)
+
 
     def put(self) -> Dict[str, Any]:
         """
@@ -230,20 +239,25 @@ class ListTodosManagementResourceByID(Resource):
             'name', type=str, required=True, help="Missing the name of the task")
         body_parser.add_argument(
             'created_on', type=str, required=True, help="Missing the creation date of the task")
+        body_parser.add_argument(
+            'description', type=str, required=False, help="Missing the description of the task")
         # Accepted only if these two parameters are strictly declared in body else raise exception
         args = body_parser.parse_args(strict=True)
         try:
             list = get_element_in_dic(list_id, LISTS)
             id = getFirstMissingID(list['todos'])
             print(id)
-
             name = args['name']
             created_on = args['created_on']
+            description = args['description']
             todo = {}
             todo['id'] = id
-            todo['name'] = name
-            todo['created_on'] = created_on
-
+            task = {} 
+            task['name'] = name
+            task['created_on'] = created_on
+            if description != None:
+                task['description'] = description
+            todo['task'] = task  
             list['todos'].insert(id, todo)
             return return_message(list, 201)
         except:
@@ -345,19 +359,24 @@ class ListTodoManagementResourceByID(Resource):
         abort_if_todo_or_list_doesnt_exist(list_id, todo_id)
         body_parser = reqparse.RequestParser()
         body_parser.add_argument(
-            'name', type=str, required=False, help="Missing the name of the list")
+            'name', type=str, required=False, help="Missing the name of the todo")
         body_parser.add_argument(
-            'created_on', type=str, required=False, help="Missing the creation date of the list")
+            'created_on', type=str, required=False, help="Missing the creation date of the todo")
+        body_parser.add_argument(
+            'description', type=str, required=False, help="Missing the description of the todo")
         args = body_parser.parse_args(strict=False)
         try:
             list = get_element_in_dic(list_id, LISTS)
             todo = get_element_in_dic(todo_id, list['todos'])
             name = args['name']
             created_on = args['created_on']
+            description = args['description']
             if name != None:
                 todo['task']['name'] = name
             if created_on != None:
                 todo['task']['created_on'] = created_on
+            if description != None:
+                todo['task']['description'] = description
             todo_to_update = get_element_in_dic(todo_id, list['todos'])
             todo_to_update = todo
             return return_message(todo_to_update, 202)  # Accepted, updated or not if putting the same data

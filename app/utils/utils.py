@@ -5,6 +5,8 @@ from typing import Dict, List, Any
 
 from app.services.todosService import TODOS
 from app.services.listsService import LISTS
+from app.services.accountsService import connected_user
+import jwt
 
 def get_ids(DICO : Dict[str, Any]) -> List[int]:
     return list(map(lambda e: e['id'], DICO))
@@ -72,8 +74,13 @@ def return_message(data: Dict[str, Any], status:int, message="") -> Dict[str, An
         200 : "OK"+message,
         202 : "Accepted",
         201 : "Created"
-        #401 : "Unauthorized"+message
     }
     return {"status": status,
             "message": message[status], 
             "data":data}
+
+def is_connect(token):
+    user = jwt.decode(token,'secret',algorithms=['HS256'])
+    if not user == connected_user:
+        return_message({},401," You need to be connect to access to this")
+
