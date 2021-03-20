@@ -21,11 +21,10 @@ class ListManagementResource(Resource):
                 description: JSON representing all the elements of the lists service
         """
         body_parser = reqparse.RequestParser(bundle_errors=True)  # Throw all the elements that has been filled uncorrectly
-        body_parser.add_argument('token', type=str, required=True, help="Missing the token")
+        body_parser.add_argument('token', location='headers', required=True)
         args = body_parser.parse_args(strict=True)
         try:
-            token = args['token']
-            is_connect(token)
+            is_connect(args['token'])
         except:
             return_message({},401)
         return return_message(LISTS, 200)
@@ -63,8 +62,13 @@ class ListManagementResource(Resource):
             'name', type=str, required=True, help="Missing the name of the list")
         body_parser.add_argument(
             'created_on', type=str, required=True, help="Missing the creation date of the list")
+        body_parser.add_argument('token', location='headers', required=True)
         # Accepted only if these two parameters are strictly declared in body else raise exception
         args = body_parser.parse_args(strict=True)
+        try:
+            is_connect(args['token'])
+        except:
+            return_message({},401)
         try:
             id = getFirstMissingID(LISTS)
             print(id)
@@ -100,6 +104,13 @@ class ListManagementResourceByID(Resource):
             404:
                 description: The list does not exist
         """
+        body_parser = reqparse.RequestParser(bundle_errors=True)  # Throw all the elements that has been filled uncorrectly
+        body_parser.add_argument('token', location='headers', required=True)
+        args = body_parser.parse_args(strict=True)
+        try:
+            is_connect(args['token'])
+        except:
+            return_message({},401)
         abort_if_list_doesnt_exist(list_id)
         return return_message(get_element_in_dic(list_id, LISTS), 200)
 
@@ -121,6 +132,13 @@ class ListManagementResourceByID(Resource):
             404:
                 description: The list does not exist
         """
+        body_parser = reqparse.RequestParser(bundle_errors=True)  # Throw all the elements that has been filled uncorrectly
+        body_parser.add_argument('token', location='headers', required=True)
+        args = body_parser.parse_args(strict=True)
+        try:
+            is_connect(args['token'])
+        except:
+            return_message({},401)
         abort_if_list_doesnt_exist(list_id)
         list = get_element_in_dic(list_id, LISTS)
         LISTS.remove(list)
@@ -155,14 +173,20 @@ class ListManagementResourceByID(Resource):
                 description: The parameters are missing or are not correct
             404:
                 description: The list does not exist
-        """
-        abort_if_list_doesnt_exist(list_id)
+        """        
+        
         body_parser = reqparse.RequestParser()
+        body_parser.add_argument('token', location='headers', required=True)
         body_parser.add_argument(
             'name', type=str, required=False, help="Missing the name of the list")
         body_parser.add_argument(
             'created_on', type=str, required=False, help="Missing the creation date of the list")
         args = body_parser.parse_args(strict=False)
+        abort_if_list_doesnt_exist(list_id)
+        try:
+            is_connect(args['token'])
+        except:
+            return_message({},401)
         try:
             list = get_element_in_dic(list_id, LISTS)
             name = args['name']
@@ -198,6 +222,13 @@ class ListTodosManagementResourceByID(Resource):
             404:
                 description: The list does not exist
         """
+        body_parser = reqparse.RequestParser(bundle_errors=True)  # Throw all the elements that has been filled uncorrectly
+        body_parser.add_argument('token', location='headers', required=True)
+        args = body_parser.parse_args(strict=True)
+        try:
+            is_connect(args['token'])
+        except:
+            return_message({},401)
         abort_if_list_doesnt_exist(list_id)
         try:
             list = get_element_in_dic(list_id, LISTS)
@@ -231,10 +262,11 @@ class ListTodosManagementResourceByID(Resource):
                 description: JSON representing created todo in the list
             400:
                 description: The parameters are missing or are not correct
-        """
-        abort_if_list_doesnt_exist(list_id)
+        """       
         # Throw all the elements that has been filled uncorrectly
         body_parser = reqparse.RequestParser(bundle_errors=True)
+        body_parser.add_argument(
+            'token', location='headers', required=True)
         body_parser.add_argument(
             'name', type=str, required=True, help="Missing the name of the task")
         body_parser.add_argument(
@@ -243,6 +275,11 @@ class ListTodosManagementResourceByID(Resource):
             'description', type=str, required=False, help="Missing the description of the task")
         # Accepted only if these two parameters are strictly declared in body else raise exception
         args = body_parser.parse_args(strict=True)
+        try:
+            is_connect(args['token'])
+        except:
+            return_message({},401)
+        abort_if_list_doesnt_exist(list_id)
         try:
             list = get_element_in_dic(list_id, LISTS)
             id = getFirstMissingID(list['todos'])
@@ -288,6 +325,13 @@ class ListTodoManagementResourceByID(Resource):
             404:
                 description: The todo or the list does not exist
         """
+        body_parser = reqparse.RequestParser(bundle_errors=True)  # Throw all the elements that has been filled uncorrectly
+        body_parser.add_argument('token', location='headers', required=True)
+        args = body_parser.parse_args(strict=True)
+        try:
+            is_connect(args['token'])
+        except:
+            return_message({},401)
         abort_if_todo_or_list_doesnt_exist(list_id, todo_id)
         try:
             list = get_element_in_dic(list_id, LISTS)
@@ -315,6 +359,13 @@ class ListTodoManagementResourceByID(Resource):
             404:
                 description: The list does not exist
         """
+        body_parser = reqparse.RequestParser(bundle_errors=True)  # Throw all the elements that has been filled uncorrectly
+        body_parser.add_argument('token', location='headers', required=True)
+        args = body_parser.parse_args(strict=True)
+        try:
+            is_connect(args['token'])
+        except:
+            return_message({},401)
         abort_if_todo_or_list_doesnt_exist(list_id, todo_id)
         list = get_element_in_dic(list_id, LISTS)
         todo = get_element_in_dic(todo_id, list['todos'])
@@ -355,16 +406,18 @@ class ListTodoManagementResourceByID(Resource):
                 description: The parameters are missing or are not correct
             404:
                 description: The list or the todo does not exist 
-        """
-        abort_if_todo_or_list_doesnt_exist(list_id, todo_id)
+        """        
         body_parser = reqparse.RequestParser()
-        body_parser.add_argument(
-            'name', type=str, required=False, help="Missing the name of the todo")
-        body_parser.add_argument(
-            'created_on', type=str, required=False, help="Missing the creation date of the todo")
-        body_parser.add_argument(
-            'description', type=str, required=False, help="Missing the description of the todo")
-        args = body_parser.parse_args(strict=False)
+        body_parser.add_argument('token', location='headers', required=True)
+        body_parser.add_argument('name', type=str, required=False, help="Missing the name of the todo")
+        body_parser.add_argument('created_on', type=str, required=False, help="Missing the creation date of the todo")
+        body_parser.add_argument('description', type=str, required=False, help="Missing the description of the todo")
+        args = body_parser.parse_args(strict=True)
+        abort_if_todo_or_list_doesnt_exist(list_id, todo_id)
+        try:
+            is_connect(args['token'])
+        except:
+            return_message({},401)
         try:
             list = get_element_in_dic(list_id, LISTS)
             todo = get_element_in_dic(todo_id, list['todos'])

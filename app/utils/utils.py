@@ -80,6 +80,16 @@ def return_message(data: Dict[str, Any], status:int, message="") -> Dict[str, An
             "data":data}
 
 def is_connect(token):
+
+#    try:
+#        user = jwt.decode(token, ,'secret',algorithms=['HS256'])
+#        if not user == connected_user:
+#            return_message({},401," You need to be connect to access to this")
+#    except jwt.ExpiredSignatureError:
+#        return 'Signature expired. Please log in again.'
+#    except jwt.InvalidTokenError:
+#        return 'Invalid token. Please log in again.'
+#
     user = jwt.decode(token,'secret',algorithms=['HS256'])
     if not user == connected_user:
         return_message({},401," You need to be connect to access to this")

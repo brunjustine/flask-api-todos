@@ -4,7 +4,7 @@ from typing import Dict, List, Any
 
 from app.services.accountsService import USERS
 from app.utils.utils import *
-
+from app import bcrypt
 import hashlib, binascii, os
 
 
@@ -63,7 +63,7 @@ class AccountsManagementResource(Resource):
             user = {}
             user['id'] = id
             user['login'] = login
-            user['password'] = password
+            user['password'] = hash_pwd(password)
             USERS.insert(id, user)
             return return_message(user, 201)
         except:
@@ -77,3 +77,6 @@ def abort_if_user_already_exist(user_login):
     if user_login in user_logins:
         return_message({},404," User with login {} already exists".format(user_login))
 
+def hash_pwd(pwd) :
+    pw_hash = bcrypt.generate_password_hash(pwd)
+    return pw_hash.decode('utf-8')
