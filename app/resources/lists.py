@@ -4,7 +4,6 @@ from flask_restful import Resource, reqparse, abort
 from typing import Dict, List, Any
 
 from app.services.listsService import LISTS
-from app.services.todosService import TODOS
 
 from app.utils.utils import *
 

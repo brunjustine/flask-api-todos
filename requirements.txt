@@ -4,11 +4,3 @@ flask_swagger
 flask_restful
 Flask
 flask-bcrypt
-# utiliser postman pour tester l'api
-
-# source flask-env/bin/activate pour lancer l'environnement virtuel
-# ou . flask-env/bin/activate
-
-# lancer avec : python3 api.py
-
-#docker-compose up -d

@@ -1,5 +1,3 @@
-from app.services.todosService import TODOS
-
 LISTS = [
     {
         'id': 0,

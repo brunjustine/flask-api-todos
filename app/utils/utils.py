@@ -3,7 +3,6 @@ from flask_restful import Resource, reqparse, abort
 
 from typing import Dict, List, Any
 
-from app.services.todosService import TODOS
 from app.services.listsService import LISTS
 from app.services.accountsService import connected_user
 import jwt
@@ -26,27 +25,6 @@ def get_element_in_dic(id : int , dico : Dict[str, Any]) ->Dict[str, Any] :
 
 def get_all_todos() -> Dict[str, Any] :
     return list(map(lambda list: list['todos'], LISTS))
-
-# TODELETE
-def abort_if_todo_doesnt_exist(todo_id: int):
-    todo_ids = get_ids(TODOS)
-    if todo_id not in todo_ids:
-        return_message({},404," Cannot find the TODO with id {}".format(todo_id))
-
-# TODELETE
-def abort_if_todo_already_exist(todo_id: int):
-    todo_ids = get_ids(TODOS)
-    if todo_id in todo_ids:
-        return_message({},404," TODO with id {} already exists".format(todo_id))
-
-# TODELETE
-def abort_if_todo_has_negative_id(todo_id: int):
-    if todo_id < 0:
-        return_message({},404," TODO cannot have negative id value")
-
-# TODELETE
-def get_todo(todo_id:int) ->  Dict[str, Any]:
-    return list(filter(lambda todo : todo['id']==todo_id, TODOS))[0]
 
 def abort_if_list_doesnt_exist(list_id: int):
     list_ids = get_ids(LISTS)
