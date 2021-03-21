@@ -6,6 +6,8 @@ from app.utils.utils import *
 from app.resources.accounts import *
 from app.services.accountsService import USERS
 from app.services.accountsService import connected_user
+import datetime
+
 
 key = "secret"
 
@@ -30,8 +32,8 @@ def login(login, pwd)-> Dict:
     db_Login = get_by_login(login)
     is_hash = bcrypt.check_password_hash(db_Login['password'], pwd)
     if login == db_Login['login'] and is_hash:
-        token = get_token(login)
         connected_user['login'] = login
+        token = get_token(login)
         return return_message(token, 200, " Logged in successfully")
     else:
         return return_message({},401, " Cannot log in, check your credentials and retry")
@@ -45,5 +47,6 @@ def get_by_login(user_login):
     return list(filter(lambda user : user['login']==user_login, USERS))[0]
         
 def get_token(user):
-    return jwt.encode({"login":user}, key, algorithm="HS256")
+    #return jwt.encode({"login":user}, key, algorithm="HS256")
+    return jwt.encode({"login":user,"exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, key, algorithm="HS256")
     
