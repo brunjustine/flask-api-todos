@@ -16,14 +16,16 @@ LISTS = [
                 'id':1,
                 'task':{
                     'name':'Pâtes',
-                    'created_on':'01/03/2020'
+                    'created_on':'01/03/2020',
+                    'description':'Prendre des tortellinis et des coquillettes.'
                 }
             },
             {
                 'id':2,
                 'task':{
                     'name':'Poisson',
-                    'created_on':'02/03/2020'
+                    'created_on':'02/03/2020',
+                    'description':'Saumon et truite.'
                 }
             },
             {
@@ -37,7 +39,8 @@ LISTS = [
                 'id':4,
                 'task':{
                     'name':'Gâteau',
-                    'created_on':'03/03/2020'
+                    'created_on':'03/03/2020',
+                    'description':'Un bon moelleux au chocolat.'
                 }
             }
         ]
@@ -50,21 +53,21 @@ LISTS = [
                 {
                     'id':0,
                     'task':{
-                        'name':'Eat',
+                        'name':'Manger',
                         'created_on':'29/02/2020'
                     }
                     },
                     {
                         'id':1,
                         'task':{
-                            'name':'Sleep',
+                            'name':'Dormir',
                             'created_on':'01/03/2020'
                         }
                     },
                     {
                         'id':2,
                         'task':{
-                            'name':'Code',
+                            'name':'Coder',
                             'created_on':'02/03/2020'
                         }
                     }
